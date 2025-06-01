@@ -1,177 +1,179 @@
-# Resume CLI MVP 開発手順
+# 修正手順とトラブルシューティング
 
-## 🚀 セットアップ
+## 🔧 修正の適用手順
 
+### 1. 既存ファイルの更新
 ```bash
-# 1. プロジェクト作成
-mkdir resume-cli-mvp
+# 既存プロジェクトがある場合
 cd resume-cli-mvp
 
-# 2. package.json を配置して依存関係インストール
+# package.jsonを更新
+# - "type": "module" を追加
+# - テストスクリプトを更新
+
+# 設定ファイルを更新
+# - tsconfig.json (module: "ESNext")
+# - jest.config.js (ES Module対応)
+```
+
+### 2. ソースコードの更新
+```bash
+# 全てのimport文に .js 拡張子を追加
+# 例: import { ResumeValidator } from '../core/validator.js';
+
+# src/core/pdf-generator.ts を完全に置き換え
+# - 日本語対応
+# - 履歴書レイアウト修正
+
+# src/schemas/resume-schema.ts に certifications を追加
+```
+
+### 3. 依存関係の再インストール
+```bash
 npm install
-
-# 3. TypeScript設定ファイル配置
-# - tsconfig.json
-# - jest.config.js
-# - .eslintrc.js
-
-# 4. ソースコード配置
-mkdir -p src/{cli,core,schemas,__tests__}
-mkdir -p src/cli/commands
 ```
 
-## 📁 ディレクトリ構成
-
-```
-resume-cli-mvp/
-├── package.json
-├── tsconfig.json
-├── jest.config.js
-├── .eslintrc.js
-├── sample-resume.yaml           # テスト用
-├── src/
-│   ├── cli/
-│   │   ├── index.ts
-│   │   └── commands/
-│   │       └── generate.ts
-│   ├── core/
-│   │   ├── validator.ts
-│   │   └── pdf-generator.ts
-│   ├── schemas/
-│   │   └── resume-schema.ts
-│   └── __tests__/
-│       ├── validator.test.ts
-│       ├── pdf-generator.test.ts
-│       └── integration.test.ts
-└── dist/                       # ビルド出力
-```
-
-## 🔨 開発フロー
-
-### 1. 実装順序
+### 4. テスト実行
 ```bash
-# Step 1: スキーマ定義
-# src/schemas/resume-schema.ts を実装
+# Jest を使用
+npm run test:jest
 
-# Step 2: バリデーター
-# src/core/validator.ts を実装
-npm run test -- validator.test.ts
-
-# Step 3: PDF生成
-# src/core/pdf-generator.ts を実装
-npm run test -- pdf-generator.test.ts
-
-# Step 4: CLI
-# src/cli/ を実装
-
-# Step 5: 統合テスト
-npm run test -- integration.test.ts
+# または Node.js 組み込みテストランナー
+npm test
 ```
 
-### 2. 開発コマンド
+### 5. 動作確認
 ```bash
-# 開発実行（TypeScript直接実行）
+# サンプルYAMLで履歴書生成
 npm run dev generate sample-resume.yaml
 
-# テスト実行
-npm test
-npm run test:watch  # ファイル変更監視
-
-# ビルド
-npm run build
-
-# リント
-npm run lint
-
-# 本番実行
-npm start generate sample-resume.yaml
-```
-
-## ✅ テスト戦略
-
-### 単体テスト
-- **validator.test.ts**: YAML検証ロジック
-- **pdf-generator.test.ts**: PDF生成ロジック
-
-### 統合テスト
-- **integration.test.ts**: YAML → PDF 全体フロー
-
-### テスト実行
-```bash
-# 全テスト実行
-npm test
-
-# カバレッジ付き
-npm test -- --coverage
-
-# 特定テストファイル
-npm test validator.test.ts
-
-# ウォッチモード
-npm run test:watch
-```
-
-## 🎯 MVP 完成基準
-
-- ✅ `resume generate sample-resume.yaml` が正常動作
-- ✅ 生成されたPDFに基本情報が含まれている
-- ✅ 全テストがパス
-- ✅ エラーハンドリングが基本的に動作
-
-## 🐛 デバッグのコツ
-
-### 1. YAML検証エラー
-```bash
-# YAMLファイルの構文確認
-npx js-yaml sample-resume.yaml
-```
-
-### 2. PDF生成確認
-```bash
 # 生成されたPDFを確認
 open resume.pdf  # macOS
 start resume.pdf # Windows
+xdg-open resume.pdf # Linux
 ```
 
-### 3. ログ出力
+## 🐛 トラブルシューティング
+
+### ES Module エラーが続く場合
+
+**エラー**: `Cannot use import statement outside a module`
+
+**解決策**:
+1. `package.json` に `"type": "module"` があることを確認
+2. 全ての import 文で `.js` 拡張子を使用
+3. `__dirname` の代わりに以下を使用:
 ```typescript
-// デバッグ用ログ追加
-console.log('DEBUG:', JSON.stringify(data, null, 2));
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 ```
 
-## 📋 MVPチェックリスト
+### 日本語フォントの問題
 
-### 機能
-- [ ] YAML読み込み
-- [ ] スキーマ検証
-- [ ] 基本的なPDF生成（氏名、住所、職歴、学歴）
-- [ ] コマンドライン引数処理
-- [ ] エラーメッセージ表示
+**症状**: 日本語が豆腐（□）になる、文字化けする
 
-### テスト
-- [ ] バリデーターテスト
-- [ ] PDF生成テスト
-- [ ] 統合テスト
-- [ ] テストカバレッジ > 70%
+**解決策**:
+1. システムフォントの確認
+```bash
+# macOS
+fc-list | grep -i "hiragino\|noto"
 
-### 品質
-- [ ] TypeScript型チェックパス
-- [ ] ESLintエラー無し
-- [ ] ビルド成功
+# Windows
+dir C:\Windows\Fonts | findstr /i "gothic\|ming"
+```
 
-## 🚀 次のPhaseに向けて
+2. フォントファイルの配置（推奨）
+```bash
+mkdir fonts
+# Noto Sans CJK フォントをダウンロードして配置
+# https://fonts.google.com/noto/specimen/Noto+Sans+JP
+```
 
-MVPが完成したら、以下を追加検討：
+3. PDFGeneratorのフォント設定を確認
 
-1. **機能拡張**
-   - `init` コマンド（テンプレート生成）
-   - `validate` コマンド
-   - 写真対応
+### PDFレイアウトの問題
 
-2. **UI/UX改善**
-   - プログレスバー
-   - 詳細なエラーメッセージ
+**症状**: テーブルが正しく表示されない、枠線がずれる
 
-3. **配布準備**
-   - npm publish
-   - GitHub Actions CI/CD
+**確認ポイント**:
+1. ページサイズ設定（A4: 595.28 x 841.89 points）
+2. マージン設定の一貫性
+3. 文字列の長さによる改行処理
+
+### テストが失敗する場合
+
+**Jest設定の確認**:
+```javascript
+// jest.config.js が正しく設定されているか
+export default {
+  preset: 'ts-jest/presets/default-esm',
+  extensionsToTreatAsEsm: ['.ts'],
+  // ...
+};
+```
+
+**ファイルパス問題**:
+```typescript
+// テストファイルで相対パスを正しく解決
+import { fileURLToPath } from 'url';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+```
+
+## ✅ 確認チェックリスト
+
+### Phase 1 MVP 完成確認
+
+- [ ] `npm install` が成功する
+- [ ] `npm run test:jest` が全てパスする
+- [ ] `npm run dev generate sample-resume.yaml` が成功する
+- [ ] 生成されたPDFに日本語が正しく表示される
+- [ ] 履歴書の形式が適切（表形式、項目配置）
+- [ ] エラーメッセージが適切に表示される
+
+### 生成されたPDFの品質確認
+
+- [ ] タイトル「履歴書」が中央に表示
+- [ ] 氏名・ふりがなが適切に配置
+- [ ] 写真枠が右上に表示
+- [ ] 学歴・職歴が表形式で表示
+- [ ] 資格情報が含まれている
+- [ ] 日付が和暦で表示
+- [ ] フォントが読みやすい
+
+## 🚀 次のステップ
+
+### Phase 1 完了後の拡張案
+
+1. **写真対応** (Phase 2)
+   - sharp ライブラリの追加
+   - 画像リサイズ・配置機能
+
+2. **CLI UX改善**
+   - `init` コマンド追加
+   - `validate` コマンド追加
+   - プログレスバー表示
+
+3. **テンプレート機能**
+   - 複数の履歴書フォーマット
+   - カスタムテンプレート機能
+
+4. **配布準備**
+   - npm package として公開
+   - バイナリ配布対応
+
+## 📞 サポート
+
+### よくある質問
+
+**Q: フォントが見つからないエラーが出る**
+A: システムフォントの設定を確認し、必要に応じて Noto Sans CJK をダウンロード
+
+**Q: PDFが空白になる**
+A: YAML形式が正しいか `validate` コマンドで確認
+
+**Q: テストが遅い**
+A: PDF生成テストは時間がかかります。`--verbose` オプションで詳細確認
+
+**Q: Windows で動作しない**
+A: パスの区切り文字問題の可能性。`path.join()` を使用していることを確認

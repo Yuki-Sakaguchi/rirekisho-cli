@@ -1,7 +1,6 @@
 import yaml from "js-yaml";
 import { readFileSync } from "fs";
 import { ResumeSchema, ResumeData } from "../schemas/resume-schema";
-import { ZodError } from "zod";
 
 export class ResumeValidator {
   static validateYamlFile(filePath: string): ResumeData {
@@ -9,8 +8,8 @@ export class ResumeValidator {
       const fileContent = readFileSync(filePath, "utf8");
       const yamlData = yaml.load(fileContent);
       return ResumeSchema.parse(yamlData);
-    } catch (error) {
-      if (error instanceof ZodError) {
+    } catch (error: any) {
+      if (error.name === "ZodError") {
         const errorMessage = error.errors
           .map((err: any) => `${err.path.join(".")}: ${err.message}`)
           .join("\n");

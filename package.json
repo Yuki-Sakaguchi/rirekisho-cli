@@ -6,11 +6,12 @@
   "bin": {
     "resume": "dist/cli/index.js"
   },
+  "type": "module",
   "scripts": {
     "dev": "tsx src/cli/index.ts",
     "build": "tsc",
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test": "node --loader tsx/esm --test src/**/*.test.ts",
+    "test:jest": "jest",
     "lint": "eslint src --ext .ts",
     "start": "node dist/cli/index.js"
   },

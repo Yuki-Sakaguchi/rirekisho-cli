@@ -22,14 +22,20 @@ export const WorkExperienceSchema = z.object({
 
 export const EducationSchema = z.object({
   date: z.string(),
-  type: z.enum(["入学", "卒業"]),
+  type: z.enum(["入学", "卒業", "修了", "中退"]),
   institution: z.string(),
+});
+
+export const CertificationSchema = z.object({
+  date: z.string(),
+  name: z.string(),
 });
 
 export const ResumeSchema = z.object({
   personal_info: PersonalInfoSchema,
   education: z.array(EducationSchema),
   work_experience: z.array(WorkExperienceSchema),
+  certifications: z.array(CertificationSchema).optional(),
 });
 
 export type ResumeData = z.infer<typeof ResumeSchema>;
