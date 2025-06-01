@@ -1,42 +1,77 @@
-# sample-resume.yaml (修正版)
-
 personal_info:
   name:
-    kanji: "田中 太郎"
-    furigana: "たなか たろう"
-  birth_date: "1990-04-15"
-  address: "東京都渋谷区恵比寿1-2-3 エビスマンション101"
-  phone: "090-1234-5678"
-  email: "tanaka.taro@example.com"
+    kanji: "坂口 裕基"
+    furigana: "さかぐち ゆうき"
+  birth_date: "1991-06-04"
+  age: 31
+  gender: "男"
+  address: "〒166-0003 東京都杉並区高円寺南1-7-3 山手杉並ビル 902"
+  phone: "080-4445-5943"
+  email: "sakaguchi.ba55.0ne@gmail.com"
+  landline: "" # 空欄の場合
+  fax: "" # 空欄の場合
 
 education:
-  - date: "2009-04"
+  - date: "2007-04"
     type: "入学"
-    institution: "東京大学工学部情報工学科"
-  - date: "2013-03"
+    institution: "川口市立川口総合高等学校"
+  - date: "2010-03"
     type: "卒業"
-    institution: "東京大学工学部情報工学科"
+    institution: "同" # 「同」で省略可能
+  - date: "2010-04"
+    type: "入学"
+    institution: "私立尚美学園大学 芸術情報学部 情報表現学科"
+  - date: "2014-03"
+    type: "卒業"
+    institution: "同"
 
 work_experience:
-  - date: "2013-04"
+  - date: "2014-04"
     type: "入社"
-    company: "株式会社テックソリューション"
-    detail: "Webアプリケーション開発・保守"
-  - date: "2018-03"
+    company: "株式会社クレヴァシステムズ"
+    detail: ""
+  - date: "2017-04"
     type: "退職"
-    company: "株式会社テックソリューション"
-  - date: "2018-04"
+    company: "株式会社クレヴァシステムズ"
+    detail: ""
+  - date: "2017-05"
     type: "入社"
-    company: "イノベーション株式会社"
-    detail: "フルスタック開発・チームリード業務"
+    company: "株式会社アクセルエンターメディア"
+    detail: ""
+  - date: "2023-08"
+    type: "退職"
+    company: "株式会社アクセルエンターメディア"
+    detail: ""
+  - date: "2023-12"
+    type: "入社"
+    company: "株式会社イエソド"
+    detail: ""
   - date: "現在"
     type: "在職中"
     company: ""
+    detail: ""
 
 certifications:
-  - date: "2012-05"
-    name: "基本情報技術者試験 合格"
-  - date: "2015-10"
-    name: "応用情報技術者試験 合格"
-  - date: "2016-03"
+  - date: "2010-09"
     name: "普通自動車第一種運転免許 取得"
+  - date: "2014-11"
+    name: "普通自動二輪車第一種運転免許 取得"
+
+additional_info:
+  skills: |
+    今一番ハマっていることはタコス作りです。生地も自分で作ります。
+    他にもゲーム、ギター、ベース、カメラ、バイクなど広く浅く色々とやっています。
+    VimとHHTBが好きです。
+    土日は個人学習や個人開発をやっていることが多いです。
+
+  motivation: |
+    <会社に合わせて変える>
+
+  other: |
+    特にありません。
+
+  # 以下は通常空欄または標準値
+  commute_time: ""
+  family_dependents: 0
+  spouse: true
+  spouse_support: false

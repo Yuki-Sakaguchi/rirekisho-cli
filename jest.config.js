@@ -1,6 +1,5 @@
 export default {
-  preset: "ts-jest/presets/default-esm",
-  extensionsToTreatAsEsm: [".ts"],
+  preset: "ts-jest",
   testEnvironment: "node",
   roots: ["<rootDir>/src"],
   testMatch: ["**/__tests__/**/*.test.ts", "**/*.test.ts"],
@@ -11,12 +10,8 @@ export default {
   ],
   coverageDirectory: "./coverage",
   coverageReporters: ["text", "lcov", "html"],
-  globals: {
-    "ts-jest": {
-      useESM: true,
-    },
+  transform: {
+    "^.+\\.ts$": "ts-jest",
   },
-  moduleNameMapping: {
-    "^(\\.{1,2}/.*)\\.js$": "$1",
-  },
+  moduleFileExtensions: ["ts", "js", "json"],
 };
