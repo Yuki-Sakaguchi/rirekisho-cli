@@ -1,0 +1,32 @@
+personal_info:
+  name:
+    kanji: "田中 太郎"
+    furigana: "たなか たろう"
+  birth_date: "1990-04-15"
+  address: "東京都渋谷区恵比寿1-2-3"
+  phone: "090-1234-5678"
+  email: "tanaka@example.com"
+
+education:
+  - date: "2009-04"
+    type: "入学"
+    institution: "東京大学工学部"
+  - date: "2013-03"
+    type: "卒業"
+    institution: "東京大学工学部"
+
+work_experience:
+  - date: "2013-04"
+    type: "入社"
+    company: "株式会社テックカンパニー"
+    detail: "Webアプリケーション開発"
+  - date: "2020-03"
+    type: "退職"
+    company: "株式会社テックカンパニー"
+  - date: "2020-04"
+    type: "入社"
+    company: "スタートアップ株式会社"
+    detail: "フルスタック開発・チームリード"
+  - date: "現在"
+    type: "在職中"
+    company: ""
