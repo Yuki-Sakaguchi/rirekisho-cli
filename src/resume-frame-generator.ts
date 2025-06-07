@@ -217,8 +217,8 @@ export class ResumeFrameGenerator {
     doc.addPage();
 
     // Page 2: 資格・免許セクション
-    const certificateY = 50;
-    const certificateHeight = 120;
+    const certificateY = 100;
+    const certificateHeight = 140;
 
     // 外枠（太線）
     doc.lineWidth(2);
@@ -277,7 +277,7 @@ export class ResumeFrameGenerator {
 
     // Page 2: 趣味・特技セクション
     const hobbyY = infoY + infoHeight + 20;
-    const hobbyHeight = 80;
+    const hobbyHeight = 120;
 
     // 外枠（太線）
     doc.lineWidth(2);
@@ -295,7 +295,7 @@ export class ResumeFrameGenerator {
 
     // Page 2: 本人希望記入欄
     const requestY = motivationY + motivationHeight + 20;
-    const requestHeight = 80;
+    const requestHeight = 120;
 
     // 外枠（太線）
     doc.lineWidth(2);
