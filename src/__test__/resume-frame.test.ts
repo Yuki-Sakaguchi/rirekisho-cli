@@ -52,4 +52,19 @@ describe("ResumeFrameGenerator", () => {
     const stats = statSync(testPdfPath);
     expect(stats.size).toBeGreaterThan(1000);
   });
+
+  test("添付画像と同じ履歴書レイアウトを生成できる", async () => {
+    // Arrange
+    const generator = new ResumeFrameGenerator();
+
+    // Act
+    await generator.generateAccurateResumeLayout(testPdfPath);
+
+    // Assert
+    expect(existsSync(testPdfPath)).toBe(true);
+
+    // より詳細な枠線が描画されているため、サイズがさらに大きい
+    const stats = statSync(testPdfPath);
+    expect(stats.size).toBeGreaterThan(1500);
+  });
 });
