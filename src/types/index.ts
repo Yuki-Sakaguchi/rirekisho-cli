@@ -2,7 +2,7 @@ export interface ResumeConfig {
   personal: {
     name: string;
     ruby: string;
-    birthDate: string;
+    birth_day: string;
     address: {
       postal: string;
       prefecture: string;
@@ -15,15 +15,25 @@ export interface ResumeConfig {
     };
   };
   education: Array<{
-    period: string;
-    institution: string;
-    status: string;
+    year: number;
+    month: number;
+    value: string;
   }>;
   experience: Array<{
-    period: string;
-    company: string;
-    position: string;
-    description: string;
+    year: number;
+    month: number;
+    value: string;
   }>;
-  skills: string[];
+  licences: Array<{
+    year: number;
+    month: number;
+    value: string;
+  }>;
+  commuting_time: string;
+  dependents: string;
+  spouse: string;
+  supporting_spouse: string;
+  hobby: string;
+  motivation: string;
+  request: string;
 }
