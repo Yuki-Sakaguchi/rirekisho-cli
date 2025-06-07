@@ -1,5 +1,5 @@
 import PDFDocument from "pdfkit";
-import { createWriteStream } from "fs";
+import { createWriteStream, existsSync } from "fs";
 import path from "path";
 import { ResumeConfig } from "./types";
 
@@ -112,12 +112,27 @@ export class ResumeFrameGenerator {
     // 通常線に戻す
     doc.lineWidth(1);
 
-    // 写真
+    // 写真枠の位置とサイズ
+    const photoX = startX + contentWidth - offsetX + 20;
+    const photoY = personalInfoY - 20;
+    const photoWidth = 90;
+    const photoHeight = 120;
+    const photoPath = path.join(process.cwd(), "data", "photo.png");
     doc
-      .rect(startX + contentWidth - offsetX + 20, personalInfoY - 20, 90, 120)
+      .rect(photoX, photoY, photoWidth, photoHeight)
       .dash(1, [10, 5])
       .stroke()
       .undash();
+    if (this.imageExists(photoPath)) {
+      try {
+        doc.image(photoPath, photoX - 1, photoY - 1, {
+          fit: [photoWidth * 1.07, photoHeight * 1.07],
+        });
+      } catch (error) {
+        console.warn(`写真の読み込みに失敗しました: ${photoPath}`, error);
+        this.drawPhotoPlaceholder(doc, photoX, photoY, photoWidth, photoHeight);
+      }
+    }
 
     // 個人情報の内部区切り線
     // ふりがな行
@@ -135,7 +150,7 @@ export class ResumeFrameGenerator {
       characterSpacing: 16,
     });
     doc.fontSize(14);
-    doc.text(config.personal.name, startX + 80, personalInfoY + 23);
+    doc.text(config.personal.name, startX + 80, personalInfoY + 28);
     doc
       .moveTo(startX, personalInfoY + 60)
       .lineTo(startX + contentWidth - offsetX, personalInfoY + 60)
@@ -627,5 +642,45 @@ export class ResumeFrameGenerator {
     // 本人希望記入欄
     const requestY = motivationY + 120 + 20;
     doc.text("本人希望記入欄", startX + 10, requestY + 15);
+  }
+
+  /**
+   * ファイルが存在するかチェック
+   */
+  private imageExists(imagePath: string): boolean {
+    try {
+      return existsSync(imagePath);
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * 写真プレースホルダーを描画
+   */
+  private drawPhotoPlaceholder(
+    doc: PDFKit.PDFDocument,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  ): void {
+    doc.fontSize(12);
+    const photoText = "写真";
+    const textWidth = doc.widthOfString(photoText);
+    const textHeight = doc.heightOfString(photoText);
+
+    // 写真枠の中央にテキストを配置
+    doc.text(
+      photoText,
+      x + (width - textWidth) / 2,
+      y + (height - textHeight) / 2
+    );
+
+    // 小さなテキストで説明を追加
+    doc.fontSize(8);
+    const noteText = "縦4cm×横3cm";
+    const noteWidth = doc.widthOfString(noteText);
+    doc.text(noteText, x + (width - noteWidth) / 2, y + height - 15);
   }
 }
