@@ -71,6 +71,13 @@ export class ResumeFrameGenerator {
     // 通常線に戻す
     doc.lineWidth(1);
 
+    // 写真
+    doc
+      .rect(startX + contentWidth - offsetX + 20, personalInfoY - 20, 90, 120)
+      .dash(1, [10, 5])
+      .stroke()
+      .undash();
+
     // 個人情報の内部区切り線
     // ふりがな行
     doc
