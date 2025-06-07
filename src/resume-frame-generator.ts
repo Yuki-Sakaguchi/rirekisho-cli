@@ -1,6 +1,7 @@
 import PDFDocument from "pdfkit";
 import { createWriteStream } from "fs";
 import path from "path";
+import { ResumeConfig } from "./types";
 
 export class ResumeFrameGenerator {
   private readonly pageWidth = 595.28; // A4 width in points
@@ -17,7 +18,7 @@ export class ResumeFrameGenerator {
    * @param outputPath 出力パス
    * @returns 生成したPDFファイルのパス
    */
-  async generate(outputPath: string): Promise<void> {
+  async generate(outputPath: string, config: ResumeConfig): Promise<void> {
     const doc = new PDFDocument({
       size: "A4",
       margins: {
