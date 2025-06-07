@@ -174,8 +174,8 @@ export class ResumeFrameGenerator {
       .undash();
 
     // Page 1: 学歴・職歴セクション ---------------------------------------------
-    const educationWorkY = personalInfoY + personalInfoHeight + 20;
-    const educationWorkHeight = 380;
+    const educationWorkY = personalInfoY + personalInfoHeight + 30;
+    const educationWorkHeight = 370;
 
     // 学歴・職歴の外枠（太線）
     doc.lineWidth(2);
@@ -193,17 +193,17 @@ export class ResumeFrameGenerator {
     // 縦線
     // 年列
     doc
-      .moveTo(startX + 50, educationWorkY)
-      .lineTo(startX + 50, educationWorkY + educationWorkHeight)
+      .moveTo(startX + 60, educationWorkY)
+      .lineTo(startX + 60, educationWorkY + educationWorkHeight)
       .stroke();
     // 月列
     doc
-      .moveTo(startX + 80, educationWorkY)
-      .lineTo(startX + 80, educationWorkY + educationWorkHeight)
+      .moveTo(startX + 100, educationWorkY)
+      .lineTo(startX + 100, educationWorkY + educationWorkHeight)
       .stroke();
 
     // 各行の横線
-    for (let i = 1; i <= 15; i++) {
+    for (let i = 1; i <= 14; i++) {
       const y = educationWorkY + 25 + i * 23;
       if (y < educationWorkY + educationWorkHeight) {
         doc
