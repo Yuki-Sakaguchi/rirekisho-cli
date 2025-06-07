@@ -67,4 +67,19 @@ describe("ResumeFrameGenerator", () => {
     const stats = statSync(testPdfPath);
     expect(stats.size).toBeGreaterThan(1500);
   });
+
+  test("写真欄と太線外枠を含む正確な履歴書レイアウトを生成できる", async () => {
+    // Arrange
+    const generator = new ResumeFrameGenerator();
+
+    // Act
+    await generator.generatePreciseResumeLayout(testPdfPath);
+
+    // Assert
+    expect(existsSync(testPdfPath)).toBe(true);
+
+    // 太線と詳細な写真欄が描画されているため、さらにサイズが大きい
+    const stats = statSync(testPdfPath);
+    expect(stats.size).toBeGreaterThan(1700);
+  });
 });

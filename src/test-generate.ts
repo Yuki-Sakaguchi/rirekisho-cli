@@ -2,12 +2,12 @@ import { ResumeFrameGenerator } from "./resume-frame-generator.js";
 
 async function main() {
   const generator = new ResumeFrameGenerator();
-  const outputPath = "accurate-resume-layout.pdf";
+  const outputPath = "precise-resume-layout.pdf";
 
   try {
-    await generator.generateAccurateResumeLayout(outputPath);
+    await generator.generatePreciseResumeLayout(outputPath);
     console.log(
-      `添付画像に合わせた履歴書レイアウトPDFを生成しました: ${outputPath}`
+      `写真欄と太線外枠を含む正確な履歴書レイアウトPDFを生成しました: ${outputPath}`
     );
   } catch (error) {
     console.error("PDF生成エラー:", error);
