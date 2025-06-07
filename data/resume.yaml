@@ -22,7 +22,7 @@ personal:
 # 学歴
 education:
   - year: 2007
-    month: 4
+    month: 12
     value: 〇〇高校 入学
   - year: 2010
     month: 3
@@ -31,7 +31,7 @@ education:
 # 職歴
 experience:
   - year: 2014
-    month: 4
+    month: 12
     value: 株式会社A社 入社
   - year: 2017
     month: 4
