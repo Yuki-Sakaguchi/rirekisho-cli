@@ -3,15 +3,22 @@ export interface ResumeConfig {
     name: string;
     ruby: string;
     birth_day: string;
+    gender: string;
+    email: string;
+    phone: string;
     address: {
-      postal: string;
-      prefecture: string;
-      city: string;
-      number: string;
+      zip: string;
+      value_ruby: string;
+      value: string;
+      phone: string;
+      fax: string;
     };
     contact: {
+      zip: string;
+      value_ruby: string;
+      value: string;
       phone: string;
-      email: string;
+      fax: string;
     };
   };
   education: Array<{

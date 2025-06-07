@@ -34,7 +34,7 @@ export class ResumeFrameGenerator {
     doc.registerFont("NotoSerifJP", this.fontPath);
     doc.font("NotoSerifJP");
 
-    this.drawPreciseResumeFrameAndText(doc);
+    this.drawPreciseResumeFrameAndText(doc, config);
 
     // PDF出力
     const stream = createWriteStream(outputPath);
@@ -51,7 +51,10 @@ export class ResumeFrameGenerator {
    * 履歴書の枠線を描画する
    * @param doc PDFドキュメント
    */
-  private drawPreciseResumeFrameAndText(doc: PDFKit.PDFDocument): void {
+  private drawPreciseResumeFrameAndText(
+    doc: PDFKit.PDFDocument,
+    config: ResumeConfig
+  ): void {
     const contentWidth = this.pageWidth - 2 * this.margin;
     const startX = this.margin;
 
@@ -119,6 +122,7 @@ export class ResumeFrameGenerator {
     // 個人情報の内部区切り線
     // ふりがな行
     doc.text("ふりがな", startX + 5, personalInfoY + 3);
+    doc.text(config.personal.ruby, startX + 80, personalInfoY + 3);
     doc
       .moveTo(startX, personalInfoY + 20)
       .lineTo(startX + contentWidth - offsetX, personalInfoY + 20)
@@ -130,13 +134,28 @@ export class ResumeFrameGenerator {
     doc.text("氏名", startX + 5, personalInfoY + 23, {
       characterSpacing: 16,
     });
+    doc.fontSize(14);
+    doc.text(config.personal.name, startX + 80, personalInfoY + 23);
     doc
       .moveTo(startX, personalInfoY + 60)
       .lineTo(startX + contentWidth - offsetX, personalInfoY + 60)
       .stroke();
 
     // 生年月日行
+    doc.fontSize(9);
     doc.text("生年月日", startX + 5, personalInfoY + 61);
+    doc.fontSize(14);
+    const birthDay = new Date(config.personal.birth_day);
+    doc.text(
+      `${birthDay.getFullYear()}年 ${
+        birthDay.getMonth() + 1
+      }月 ${birthDay.getDate()}日（満 ${
+        new Date().getFullYear() - birthDay.getFullYear()
+      } 歳）`,
+      startX + 80,
+      personalInfoY + 68
+    );
+    doc.text(config.personal.gender, startX + 360, personalInfoY + 68);
     doc
       .moveTo(startX, personalInfoY + 100)
       .lineTo(startX + contentWidth - offsetX, personalInfoY + 100)
@@ -149,8 +168,11 @@ export class ResumeFrameGenerator {
       .stroke();
 
     // 連絡先行1（携帯電話・EMAIL）
+    doc.fontSize(9);
     doc.text("携帯電話番号", startX + 5, personalInfoY + 103);
+    doc.text(config.personal.phone, startX + 80, personalInfoY + 103);
     doc.text("E-MAIL", startX + 186, personalInfoY + 103);
+    doc.text(config.personal.email, startX + 233, personalInfoY + 103);
     doc
       .moveTo(startX, personalInfoY + 100)
       .lineTo(startX + contentWidth - offsetX, personalInfoY + 100)
@@ -175,9 +197,29 @@ export class ResumeFrameGenerator {
       (personalInfoY + personalInfoHeight - phoneFaxY) / 2;
     const phoneFaxHalfY = phoneFaxY + phoneFaxHalfHeight;
     doc.text("電話", startX + contentWidth - 116, personalInfoY + 122);
+    doc.text(
+      config.personal.address.phone,
+      startX + contentWidth - 116,
+      personalInfoY + 139
+    );
     doc.text("FAX", startX + contentWidth - 115, personalInfoY + 162);
+    doc.text(
+      config.personal.address.fax,
+      startX + contentWidth - 115,
+      personalInfoY + 179
+    );
     doc.text("電話", startX + contentWidth - 116, phoneFaxHalfY + 2);
+    doc.text(
+      config.personal.contact.phone,
+      startX + contentWidth - 116,
+      phoneFaxHalfY + 19
+    );
     doc.text("FAX", startX + contentWidth - 115, phoneFaxHalfY + 42);
+    doc.text(
+      config.personal.contact.phone,
+      startX + contentWidth - 115,
+      phoneFaxHalfY + 59
+    );
     doc
       .moveTo(startX + contentWidth - offsetX, phoneFaxY)
       .lineTo(
@@ -203,7 +245,17 @@ export class ResumeFrameGenerator {
 
     // 住所行1
     doc.text("ふりがな", startX + 5, personalInfoY + 123);
+    doc.text(
+      config.personal.address.value_ruby,
+      startX + 60,
+      personalInfoY + 123
+    );
+
     doc.text("現住所 〒", startX + 5, personalInfoY + 143);
+    doc.text(config.personal.address.zip, startX + 60, personalInfoY + 143);
+    doc.fontSize(12);
+    doc.text(config.personal.address.value, startX + 60, personalInfoY + 163);
+    doc.fontSize(9);
     doc
       .moveTo(startX, personalInfoY + 120)
       .lineTo(startX + contentWidth - 110, personalInfoY + 120)
@@ -218,7 +270,20 @@ export class ResumeFrameGenerator {
 
     // 住所行2
     doc.text("ふりがな", startX + 5, phoneFaxHalfY + 3);
+    doc.text(
+      config.personal.contact.value_ruby,
+      startX + 60,
+      phoneFaxHalfY + 3
+    );
     doc.text("連絡先 〒", startX + 5, phoneFaxHalfY + 20 + 3);
+    doc.text(config.personal.contact.zip, startX + 60, phoneFaxHalfY + 20 + 3);
+    doc.fontSize(12);
+    doc.text(
+      config.personal.contact.value,
+      startX + 60,
+      phoneFaxHalfY + 40 + 3
+    );
+    doc.fontSize(9);
     doc
       .moveTo(startX, phoneFaxHalfY)
       .lineTo(startX + contentWidth - offsetX, phoneFaxHalfY)
@@ -275,6 +340,38 @@ export class ResumeFrameGenerator {
           .lineTo(startX + contentWidth, y)
           .stroke();
       }
+    }
+
+    let index = 0;
+    if (config.education.length > 0) {
+      doc.fontSize(12);
+      doc.text("学歴", startX + 305, educationWorkY + 26);
+      index++;
+      for (let i = 1; i <= config.education.length; i++) {
+        const y = educationWorkY + 26 + i * 23;
+        const data = config.education[i - 1];
+        doc.text(data.year.toString(), startX + 17, y);
+        doc.text(data.month.toString(), startX + 77, y);
+        doc.text(data.value, startX + 110, y + 1);
+        index++;
+      }
+    }
+
+    if (config.experience.length > 0) {
+      doc.fontSize(12);
+      doc.text("職歴", startX + 305, educationWorkY + 26 + index * 23);
+      for (let i = 1; i <= config.experience.length; i++) {
+        const y = educationWorkY + 26 + (i + index) * 23;
+        const data = config.experience[i - 1];
+        doc.text(data.year.toString(), startX + 17, y);
+        doc.text(data.month.toString(), startX + 77, y);
+        doc.text(data.value, startX + 110, y + 1);
+      }
+      doc.text(
+        "以上",
+        startX + 480,
+        educationWorkY + 26 + (index + config.experience.length + 1) * 23 + 1
+      );
     }
 
     // Page 2を追加 ------------------------------------------------------------
