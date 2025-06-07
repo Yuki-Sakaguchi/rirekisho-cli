@@ -26,6 +26,7 @@ export class ResumeFrameGenerator {
         left: this.margin,
         right: this.margin,
       },
+      bufferPages: true,
     });
 
     // 日本語フォントを登録
