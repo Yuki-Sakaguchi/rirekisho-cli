@@ -5,10 +5,8 @@ async function main() {
   const outputPath = "precise-resume-layout.pdf";
 
   try {
-    await generator.generatePreciseResumeLayout(outputPath);
-    console.log(
-      `写真欄と太線外枠を含む正確な履歴書レイアウトPDFを生成しました: ${outputPath}`
-    );
+    await generator.generate(outputPath);
+    console.log(`PDFを生成しました: ${outputPath}`);
   } catch (error) {
     console.error("PDF生成エラー:", error);
   }

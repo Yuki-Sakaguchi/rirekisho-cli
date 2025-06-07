@@ -8,6 +8,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "build": "tsc",
+    "generate": "tsx src/index.ts",
     "dev": "tsx src/index.ts"
   },
   "dependencies": {
