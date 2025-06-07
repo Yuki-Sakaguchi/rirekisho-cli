@@ -456,26 +456,29 @@ export class ResumeFrameGenerator {
     // Page 2: 通勤時間・扶養家族等の情報セクション
     const infoY = certificateY + certificateHeight + 20;
     const infoHeight = 50;
+    doc.fontSize(9);
     doc.text("通勤時間", startX + 6, infoY + 4);
+    doc.text("扶養家族", startX + 140, infoY + 4);
+    doc.text("配偶者", startX + 275, infoY + 4);
+    doc.text("配偶者の扶養義務", startX + 408, infoY + 4);
+    doc.fontSize(12);
     doc.text(config.commuting_time, startX, infoY + 24, {
       align: "center",
       width: 138,
     });
-    doc.text("扶養家族数", startX + 140, infoY + 4);
     doc.text(config.dependents, startX + 134, infoY + 24, {
       align: "center",
       width: 138,
     });
-    doc.text("配偶者", startX + 275, infoY + 4);
     doc.text(config.spouse, startX + 263, infoY + 24, {
       align: "center",
       width: 138,
     });
-    doc.text("配偶者の扶養義務", startX + 408, infoY + 4);
     doc.text(config.supporting_spouse, startX + 396, infoY + 24, {
       align: "center",
       width: 138,
     });
+    doc.fontSize(9);
 
     // 外枠（太線）
     doc.lineWidth(2);
@@ -500,6 +503,7 @@ export class ResumeFrameGenerator {
     const hobbyY = infoY + infoHeight + 20;
     const hobbyHeight = 120;
     doc.text("趣味・特技", startX + 7, hobbyY + 5);
+    doc.fontSize(12);
     doc.text(config.hobby, startX + 7, hobbyY + 24, {
       align: "left",
       width: contentWidth - startX - 14,
@@ -513,7 +517,9 @@ export class ResumeFrameGenerator {
     // Page 2: 志望動機セクション
     const motivationY = hobbyY + hobbyHeight + 20;
     const motivationHeight = 120;
+    doc.fontSize(9);
     doc.text("志望動機", startX + 7, motivationY + 5);
+    doc.fontSize(12);
     doc.text(config.motivation, startX + 7, motivationY + 24, {
       align: "left",
       width: contentWidth - startX - 14,
@@ -527,7 +533,9 @@ export class ResumeFrameGenerator {
     // Page 2: 本人希望記入欄
     const requestY = motivationY + motivationHeight + 20;
     const requestHeight = 120;
+    doc.fontSize(9);
     doc.text("本人希望記入欄", startX + 7, requestY + 5);
+    doc.fontSize(12);
     doc.text(config.request, startX + 7, requestY + 24, {
       align: "left",
       width: contentWidth - startX - 14,
