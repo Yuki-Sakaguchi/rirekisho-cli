@@ -37,4 +37,19 @@ describe("ResumeFrameGenerator", () => {
     const stats = statSync(testPdfPath);
     expect(stats.size).toBeGreaterThan(0);
   });
+
+  test("履歴書の枠線を描画したPDFを生成できる", async () => {
+    // Arrange
+    const generator = new ResumeFrameGenerator();
+
+    // Act
+    await generator.generateResumeLayout(testPdfPath);
+
+    // Assert
+    expect(existsSync(testPdfPath)).toBe(true);
+
+    // 枠線が描画されているため、基本PDFよりサイズが大きい
+    const stats = statSync(testPdfPath);
+    expect(stats.size).toBeGreaterThan(1000);
+  });
 });
