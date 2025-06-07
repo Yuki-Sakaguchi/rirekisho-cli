@@ -1,6 +1,7 @@
 import PDFDocument from "pdfkit";
-import { createWriteStream } from "fs";
+import { createWriteStream, existsSync } from "fs";
 import path from "path";
+import { ResumeConfig } from "./types";
 
 export class ResumeFrameGenerator {
   private readonly pageWidth = 595.28; // A4 width in points
@@ -17,7 +18,7 @@ export class ResumeFrameGenerator {
    * @param outputPath 出力パス
    * @returns 生成したPDFファイルのパス
    */
-  async generate(outputPath: string): Promise<void> {
+  async generate(outputPath: string, config: ResumeConfig): Promise<void> {
     const doc = new PDFDocument({
       size: "A4",
       margins: {
@@ -26,13 +27,14 @@ export class ResumeFrameGenerator {
         left: this.margin,
         right: this.margin,
       },
+      bufferPages: true,
     });
 
     // 日本語フォントを登録
     doc.registerFont("NotoSerifJP", this.fontPath);
     doc.font("NotoSerifJP");
 
-    this.drawPreciseResumeFrameAndText(doc);
+    this.drawPreciseResumeFrameAndText(doc, config);
 
     // PDF出力
     const stream = createWriteStream(outputPath);
@@ -49,7 +51,10 @@ export class ResumeFrameGenerator {
    * 履歴書の枠線を描画する
    * @param doc PDFドキュメント
    */
-  private drawPreciseResumeFrameAndText(doc: PDFKit.PDFDocument): void {
+  private drawPreciseResumeFrameAndText(
+    doc: PDFKit.PDFDocument,
+    config: ResumeConfig
+  ): void {
     const contentWidth = this.pageWidth - 2 * this.margin;
     const startX = this.margin;
 
@@ -107,16 +112,32 @@ export class ResumeFrameGenerator {
     // 通常線に戻す
     doc.lineWidth(1);
 
-    // 写真
+    // 写真枠の位置とサイズ
+    const photoX = startX + contentWidth - offsetX + 20;
+    const photoY = personalInfoY - 20;
+    const photoWidth = 90;
+    const photoHeight = 120;
+    const photoPath = path.join(process.cwd(), "data", "photo.png");
     doc
-      .rect(startX + contentWidth - offsetX + 20, personalInfoY - 20, 90, 120)
+      .rect(photoX, photoY, photoWidth, photoHeight)
       .dash(1, [10, 5])
       .stroke()
       .undash();
+    if (this.imageExists(photoPath)) {
+      try {
+        doc.image(photoPath, photoX - 1, photoY - 1, {
+          fit: [photoWidth * 1.07, photoHeight * 1.07],
+        });
+      } catch (error) {
+        console.warn(`写真の読み込みに失敗しました: ${photoPath}`, error);
+        this.drawPhotoPlaceholder(doc, photoX, photoY, photoWidth, photoHeight);
+      }
+    }
 
     // 個人情報の内部区切り線
     // ふりがな行
     doc.text("ふりがな", startX + 5, personalInfoY + 3);
+    doc.text(config.personal.ruby, startX + 80, personalInfoY + 3);
     doc
       .moveTo(startX, personalInfoY + 20)
       .lineTo(startX + contentWidth - offsetX, personalInfoY + 20)
@@ -128,13 +149,28 @@ export class ResumeFrameGenerator {
     doc.text("氏名", startX + 5, personalInfoY + 23, {
       characterSpacing: 16,
     });
+    doc.fontSize(14);
+    doc.text(config.personal.name, startX + 80, personalInfoY + 28);
     doc
       .moveTo(startX, personalInfoY + 60)
       .lineTo(startX + contentWidth - offsetX, personalInfoY + 60)
       .stroke();
 
     // 生年月日行
+    doc.fontSize(9);
     doc.text("生年月日", startX + 5, personalInfoY + 61);
+    doc.fontSize(14);
+    const birthDay = new Date(config.personal.birth_day);
+    doc.text(
+      `${birthDay.getFullYear()}年 ${
+        birthDay.getMonth() + 1
+      }月 ${birthDay.getDate()}日（満 ${
+        new Date().getFullYear() - birthDay.getFullYear()
+      } 歳）`,
+      startX + 80,
+      personalInfoY + 68
+    );
+    doc.text(config.personal.gender, startX + 360, personalInfoY + 68);
     doc
       .moveTo(startX, personalInfoY + 100)
       .lineTo(startX + contentWidth - offsetX, personalInfoY + 100)
@@ -147,8 +183,11 @@ export class ResumeFrameGenerator {
       .stroke();
 
     // 連絡先行1（携帯電話・EMAIL）
+    doc.fontSize(9);
     doc.text("携帯電話番号", startX + 5, personalInfoY + 103);
+    doc.text(config.personal.phone, startX + 80, personalInfoY + 103);
     doc.text("E-MAIL", startX + 186, personalInfoY + 103);
+    doc.text(config.personal.email, startX + 233, personalInfoY + 103);
     doc
       .moveTo(startX, personalInfoY + 100)
       .lineTo(startX + contentWidth - offsetX, personalInfoY + 100)
@@ -173,9 +212,29 @@ export class ResumeFrameGenerator {
       (personalInfoY + personalInfoHeight - phoneFaxY) / 2;
     const phoneFaxHalfY = phoneFaxY + phoneFaxHalfHeight;
     doc.text("電話", startX + contentWidth - 116, personalInfoY + 122);
+    doc.text(
+      config.personal.address.phone,
+      startX + contentWidth - 116,
+      personalInfoY + 139
+    );
     doc.text("FAX", startX + contentWidth - 115, personalInfoY + 162);
+    doc.text(
+      config.personal.address.fax,
+      startX + contentWidth - 115,
+      personalInfoY + 179
+    );
     doc.text("電話", startX + contentWidth - 116, phoneFaxHalfY + 2);
+    doc.text(
+      config.personal.contact.phone,
+      startX + contentWidth - 116,
+      phoneFaxHalfY + 19
+    );
     doc.text("FAX", startX + contentWidth - 115, phoneFaxHalfY + 42);
+    doc.text(
+      config.personal.contact.phone,
+      startX + contentWidth - 115,
+      phoneFaxHalfY + 59
+    );
     doc
       .moveTo(startX + contentWidth - offsetX, phoneFaxY)
       .lineTo(
@@ -201,7 +260,17 @@ export class ResumeFrameGenerator {
 
     // 住所行1
     doc.text("ふりがな", startX + 5, personalInfoY + 123);
+    doc.text(
+      config.personal.address.value_ruby,
+      startX + 60,
+      personalInfoY + 123
+    );
+
     doc.text("現住所 〒", startX + 5, personalInfoY + 143);
+    doc.text(config.personal.address.zip, startX + 60, personalInfoY + 143);
+    doc.fontSize(12);
+    doc.text(config.personal.address.value, startX + 60, personalInfoY + 163);
+    doc.fontSize(9);
     doc
       .moveTo(startX, personalInfoY + 120)
       .lineTo(startX + contentWidth - 110, personalInfoY + 120)
@@ -216,7 +285,20 @@ export class ResumeFrameGenerator {
 
     // 住所行2
     doc.text("ふりがな", startX + 5, phoneFaxHalfY + 3);
+    doc.text(
+      config.personal.contact.value_ruby,
+      startX + 60,
+      phoneFaxHalfY + 3
+    );
     doc.text("連絡先 〒", startX + 5, phoneFaxHalfY + 20 + 3);
+    doc.text(config.personal.contact.zip, startX + 60, phoneFaxHalfY + 20 + 3);
+    doc.fontSize(12);
+    doc.text(
+      config.personal.contact.value,
+      startX + 60,
+      phoneFaxHalfY + 40 + 3
+    );
+    doc.fontSize(9);
     doc
       .moveTo(startX, phoneFaxHalfY)
       .lineTo(startX + contentWidth - offsetX, phoneFaxHalfY)
@@ -275,6 +357,44 @@ export class ResumeFrameGenerator {
       }
     }
 
+    let index = 0;
+    if (config.education.length > 0) {
+      doc.fontSize(12);
+      doc.text("学歴", startX + 305, educationWorkY + 26);
+      index++;
+      for (let i = 1; i <= config.education.length; i++) {
+        const y = educationWorkY + 26 + i * 23;
+        const data = config.education[i - 1];
+        doc.text(data.year.toString(), startX + 17, y);
+        doc.text(data.month.toString(), startX + 71, y, {
+          align: "center",
+          width: 20,
+        });
+        doc.text(data.value, startX + 110, y + 1);
+        index++;
+      }
+    }
+
+    if (config.experience.length > 0) {
+      doc.fontSize(12);
+      doc.text("職歴", startX + 305, educationWorkY + 26 + index * 23);
+      for (let i = 1; i <= config.experience.length; i++) {
+        const y = educationWorkY + 26 + (i + index) * 23;
+        const data = config.experience[i - 1];
+        doc.text(data.year.toString(), startX + 17, y);
+        doc.text(data.month.toString(), startX + 71, y, {
+          align: "center",
+          width: 20,
+        });
+        doc.text(data.value, startX + 110, y + 1);
+      }
+      doc.text(
+        "以上",
+        startX + 480,
+        educationWorkY + 26 + (index + config.experience.length + 1) * 23 + 1
+      );
+    }
+
     // Page 2を追加 ------------------------------------------------------------
     doc.addPage();
 
@@ -287,6 +407,7 @@ export class ResumeFrameGenerator {
     doc.rect(startX, certificateY, contentWidth, certificateHeight).stroke();
     doc.lineWidth(1);
 
+    doc.fontSize(9);
     doc.text("年", startX + 26, certificateY + 6);
     doc.text("月", startX + 76, certificateY + 6);
     doc.text("免許・資格", startX + 295, certificateY + 6);
@@ -318,13 +439,43 @@ export class ResumeFrameGenerator {
       }
     }
 
+    if (config.licences.length > 0) {
+      doc.fontSize(12);
+      for (let i = 0; i < config.licences.length; i++) {
+        const y = certificateY + 26 + i * 23;
+        const data = config.licences[i];
+        doc.text(data.year.toString(), startX + 17, y);
+        doc.text(data.month.toString(), startX + 71, y, {
+          align: "center",
+          width: 20,
+        });
+        doc.text(data.value, startX + 110, y + 1);
+      }
+    }
+
     // Page 2: 通勤時間・扶養家族等の情報セクション
     const infoY = certificateY + certificateHeight + 20;
     const infoHeight = 50;
     doc.text("通勤時間", startX + 6, infoY + 4);
+    doc.text(config.commuting_time, startX, infoY + 24, {
+      align: "center",
+      width: 138,
+    });
     doc.text("扶養家族数", startX + 140, infoY + 4);
+    doc.text(config.dependents, startX + 134, infoY + 24, {
+      align: "center",
+      width: 138,
+    });
     doc.text("配偶者", startX + 275, infoY + 4);
+    doc.text(config.spouse, startX + 263, infoY + 24, {
+      align: "center",
+      width: 138,
+    });
     doc.text("配偶者の扶養義務", startX + 408, infoY + 4);
+    doc.text(config.supporting_spouse, startX + 396, infoY + 24, {
+      align: "center",
+      width: 138,
+    });
 
     // 外枠（太線）
     doc.lineWidth(2);
@@ -349,6 +500,10 @@ export class ResumeFrameGenerator {
     const hobbyY = infoY + infoHeight + 20;
     const hobbyHeight = 120;
     doc.text("趣味・特技", startX + 7, hobbyY + 5);
+    doc.text(config.hobby, startX + 7, hobbyY + 24, {
+      align: "left",
+      width: contentWidth - startX - 14,
+    });
 
     // 外枠（太線）
     doc.lineWidth(2);
@@ -359,6 +514,10 @@ export class ResumeFrameGenerator {
     const motivationY = hobbyY + hobbyHeight + 20;
     const motivationHeight = 120;
     doc.text("志望動機", startX + 7, motivationY + 5);
+    doc.text(config.motivation, startX + 7, motivationY + 24, {
+      align: "left",
+      width: contentWidth - startX - 14,
+    });
 
     // 外枠（太線）
     doc.lineWidth(2);
@@ -369,6 +528,10 @@ export class ResumeFrameGenerator {
     const requestY = motivationY + motivationHeight + 20;
     const requestHeight = 120;
     doc.text("本人希望記入欄", startX + 7, requestY + 5);
+    doc.text(config.request, startX + 7, requestY + 24, {
+      align: "left",
+      width: contentWidth - startX - 14,
+    });
 
     // 外枠（太線）
     doc.lineWidth(2);
@@ -479,5 +642,45 @@ export class ResumeFrameGenerator {
     // 本人希望記入欄
     const requestY = motivationY + 120 + 20;
     doc.text("本人希望記入欄", startX + 10, requestY + 15);
+  }
+
+  /**
+   * ファイルが存在するかチェック
+   */
+  private imageExists(imagePath: string): boolean {
+    try {
+      return existsSync(imagePath);
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * 写真プレースホルダーを描画
+   */
+  private drawPhotoPlaceholder(
+    doc: PDFKit.PDFDocument,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  ): void {
+    doc.fontSize(12);
+    const photoText = "写真";
+    const textWidth = doc.widthOfString(photoText);
+    const textHeight = doc.heightOfString(photoText);
+
+    // 写真枠の中央にテキストを配置
+    doc.text(
+      photoText,
+      x + (width - textWidth) / 2,
+      y + (height - textHeight) / 2
+    );
+
+    // 小さなテキストで説明を追加
+    doc.fontSize(8);
+    const noteText = "縦4cm×横3cm";
+    const noteWidth = doc.widthOfString(noteText);
+    doc.text(noteText, x + (width - noteWidth) / 2, y + height - 15);
   }
 }
