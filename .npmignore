@@ -1,0 +1,13 @@
+src/
+*.ts
+!*.d.ts
+tsconfig.json
+jest.config.js
+coverage/
+.env
+.DS_Store
+docs/
+example/
+data/
+fonts/
+*.pdf 

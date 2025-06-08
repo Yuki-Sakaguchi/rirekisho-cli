@@ -9,7 +9,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "test": "jest",
@@ -17,7 +18,7 @@
     "build": "tsc",
     "generate": "tsx src/index.ts",
     "dev": "tsx src/index.ts",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build && chmod +x dist/cli.js"
   },
   "dependencies": {
     "commander": "^14.0.0",
@@ -38,7 +39,10 @@
     "resume",
     "pdf",
     "cli",
-    "generator"
+    "generator",
+    "japanese",
+    "履歴書",
+    "rirekisho"
   ],
   "author": "Yuki Sakaguchi",
   "license": "MIT",
@@ -55,5 +59,13 @@
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Yuki-Sakaguchi/rirekisho-cli.git"
+  },
+  "homepage": "https://github.com/Yuki-Sakaguchi/rirekisho-cli#readme",
+  "bugs": {
+    "url": "https://github.com/Yuki-Sakaguchi/rirekisho-cli/issues"
   }
 }
