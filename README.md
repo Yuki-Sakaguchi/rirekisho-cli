@@ -1,4 +1,4 @@
-# 📄 Resume PDF CLI
+# rirekisho-cli
 
 **日本の履歴書を簡単に生成できるCLIツール**
 
@@ -17,14 +17,14 @@ YAMLファイルから美しい履歴書PDFを自動生成します。JIS規格�
 ### npxで即座に実行
 
 ```bash
-npx resume-pdf-cli generate
+npx rirekisho-cli generate
 ```
 
 ### グローバルインストール
 
 ```bash
-npm install -g resume-pdf-cli
-resume-pdf generate
+npm install -g rirekisho-cli
+rirekisho generate
 ```
 
 ## 📖 使い方
@@ -33,10 +33,10 @@ resume-pdf generate
 
 ```bash
 # デフォルト設定で生成
-resume-pdf generate
+rirekisho generate
 
 # カスタムファイルを指定
-resume-pdf generate -i my-resume.yaml -m my-photo.jpg -o my-resume.pdf
+rirekisho generate -i my-resume.yaml -m my-photo.jpg -o my-resume.pdf
 ```
 
 ### オプション
@@ -162,8 +162,8 @@ your-project/
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/your-username/resume-pdf-cli
-cd resume-pdf-cli
+git clone https://github.com/Yuki-Sakaguchi/rirekisho-cli
+cd rirekisho-cli
 
 # 依存関係をインストール
 npm install

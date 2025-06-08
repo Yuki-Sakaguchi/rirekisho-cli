@@ -1,11 +1,11 @@
 {
-  "name": "resume-pdf-cli",
+  "name": "rirekisho-cli",
   "version": "0.1.0",
   "description": "履歴書生成CLI",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "resume-pdf": "dist/cli.js"
+    "rirekisho": "dist/cli.js"
   },
   "files": [
     "dist",
@@ -41,5 +41,19 @@
     "generator"
   ],
   "author": "Yuki Sakaguchi",
-  "license": "MIT"
+  "license": "MIT",
+  "licenses": [
+    {
+      "type": "SIL OFL 1.1",
+      "url": "http://scripts.sil.org/OFL",
+      "files": [
+        "fonts/NotoSerifJP-Regular.ttf",
+        "fonts/NotoSerifJP-Bold.ttf"
+      ]
+    }
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
 }
