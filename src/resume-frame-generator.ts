@@ -16,9 +16,15 @@ export class ResumeFrameGenerator {
   /**
    * 履歴書の枠線を描画したPDFを生成する
    * @param outputPath 出力パス
+   * @param config 設定
+   * @param imagePath 証明写真のパス
    * @returns 生成したPDFファイルのパス
    */
-  async generate(outputPath: string, config: ResumeConfig): Promise<void> {
+  async generate(
+    outputPath: string,
+    config: ResumeConfig,
+    imagePath: string
+  ): Promise<void> {
     const doc = new PDFDocument({
       size: "A4",
       margins: {
@@ -34,7 +40,7 @@ export class ResumeFrameGenerator {
     doc.registerFont("NotoSerifJP", this.fontPath);
     doc.font("NotoSerifJP");
 
-    this.drawPreciseResumeFrameAndText(doc, config);
+    this.drawPreciseResumeFrameAndText(doc, config, imagePath);
 
     // PDF出力
     const stream = createWriteStream(outputPath);
@@ -53,7 +59,8 @@ export class ResumeFrameGenerator {
    */
   private drawPreciseResumeFrameAndText(
     doc: PDFKit.PDFDocument,
-    config: ResumeConfig
+    config: ResumeConfig,
+    imagePath: string
   ): void {
     const contentWidth = this.pageWidth - 2 * this.margin;
     const startX = this.margin;
@@ -117,19 +124,18 @@ export class ResumeFrameGenerator {
     const photoY = personalInfoY - 20;
     const photoWidth = 90;
     const photoHeight = 120;
-    const photoPath = path.join(process.cwd(), "data", "photo.png");
     doc
       .rect(photoX, photoY, photoWidth, photoHeight)
       .dash(1, [10, 5])
       .stroke()
       .undash();
-    if (this.imageExists(photoPath)) {
+    if (this.imageExists(imagePath)) {
       try {
-        doc.image(photoPath, photoX - 1, photoY - 1, {
+        doc.image(imagePath, photoX - 1, photoY - 1, {
           fit: [photoWidth * 1.07, photoHeight * 1.07],
         });
       } catch (error) {
-        console.warn(`写真の読み込みに失敗しました: ${photoPath}`, error);
+        console.warn(`写真の読み込みに失敗しました: ${imagePath}`, error);
         this.drawPhotoPlaceholder(doc, photoX, photoY, photoWidth, photoHeight);
       }
     }
@@ -137,7 +143,9 @@ export class ResumeFrameGenerator {
     // 個人情報の内部区切り線
     // ふりがな行
     doc.text("ふりがな", startX + 5, personalInfoY + 3);
-    doc.text(config.personal.ruby, startX + 80, personalInfoY + 3);
+    if (config?.personal?.ruby) {
+      doc.text(config.personal.ruby, startX + 80, personalInfoY + 3);
+    }
     doc
       .moveTo(startX, personalInfoY + 20)
       .lineTo(startX + contentWidth - offsetX, personalInfoY + 20)
@@ -150,7 +158,9 @@ export class ResumeFrameGenerator {
       characterSpacing: 16,
     });
     doc.fontSize(14);
-    doc.text(config.personal.name, startX + 80, personalInfoY + 28);
+    if (config?.personal?.name) {
+      doc.text(config.personal.name, startX + 80, personalInfoY + 28);
+    }
     doc
       .moveTo(startX, personalInfoY + 60)
       .lineTo(startX + contentWidth - offsetX, personalInfoY + 60)
@@ -160,17 +170,21 @@ export class ResumeFrameGenerator {
     doc.fontSize(9);
     doc.text("生年月日", startX + 5, personalInfoY + 61);
     doc.fontSize(14);
-    const birthDay = new Date(config.personal.birth_day);
-    doc.text(
-      `${birthDay.getFullYear()}年 ${
-        birthDay.getMonth() + 1
-      }月 ${birthDay.getDate()}日（満 ${
-        new Date().getFullYear() - birthDay.getFullYear()
-      } 歳）`,
-      startX + 80,
-      personalInfoY + 68
-    );
-    doc.text(config.personal.gender, startX + 360, personalInfoY + 68);
+    if (config?.personal?.birth_day) {
+      const birthDay = new Date(config.personal.birth_day);
+      doc.text(
+        `${birthDay.getFullYear()}年 ${
+          birthDay.getMonth() + 1
+        }月 ${birthDay.getDate()}日（満 ${
+          new Date().getFullYear() - birthDay.getFullYear()
+        } 歳）`,
+        startX + 80,
+        personalInfoY + 68
+      );
+    }
+    if (config?.personal?.gender) {
+      doc.text(config.personal.gender, startX + 360, personalInfoY + 68);
+    }
     doc
       .moveTo(startX, personalInfoY + 100)
       .lineTo(startX + contentWidth - offsetX, personalInfoY + 100)
@@ -185,9 +199,13 @@ export class ResumeFrameGenerator {
     // 連絡先行1（携帯電話・EMAIL）
     doc.fontSize(9);
     doc.text("携帯電話番号", startX + 5, personalInfoY + 103);
-    doc.text(config.personal.phone, startX + 80, personalInfoY + 103);
+    if (config?.personal?.phone) {
+      doc.text(config.personal.phone, startX + 80, personalInfoY + 103);
+    }
     doc.text("E-MAIL", startX + 186, personalInfoY + 103);
-    doc.text(config.personal.email, startX + 233, personalInfoY + 103);
+    if (config?.personal?.email) {
+      doc.text(config.personal.email, startX + 233, personalInfoY + 103);
+    }
     doc
       .moveTo(startX, personalInfoY + 100)
       .lineTo(startX + contentWidth - offsetX, personalInfoY + 100)
@@ -212,29 +230,37 @@ export class ResumeFrameGenerator {
       (personalInfoY + personalInfoHeight - phoneFaxY) / 2;
     const phoneFaxHalfY = phoneFaxY + phoneFaxHalfHeight;
     doc.text("電話", startX + contentWidth - 116, personalInfoY + 122);
-    doc.text(
-      config.personal.address.phone,
-      startX + contentWidth - 116,
-      personalInfoY + 139
-    );
+    if (config?.personal?.address?.phone) {
+      doc.text(
+        config.personal.address.phone,
+        startX + contentWidth - 116,
+        personalInfoY + 139
+      );
+    }
     doc.text("FAX", startX + contentWidth - 115, personalInfoY + 162);
-    doc.text(
-      config.personal.address.fax,
-      startX + contentWidth - 115,
-      personalInfoY + 179
-    );
+    if (config?.personal?.address?.fax) {
+      doc.text(
+        config.personal.address.fax,
+        startX + contentWidth - 115,
+        personalInfoY + 179
+      );
+    }
     doc.text("電話", startX + contentWidth - 116, phoneFaxHalfY + 2);
-    doc.text(
-      config.personal.contact.phone,
-      startX + contentWidth - 116,
-      phoneFaxHalfY + 19
-    );
+    if (config?.personal?.contact?.phone) {
+      doc.text(
+        config.personal.contact.phone,
+        startX + contentWidth - 116,
+        phoneFaxHalfY + 19
+      );
+    }
     doc.text("FAX", startX + contentWidth - 115, phoneFaxHalfY + 42);
-    doc.text(
-      config.personal.contact.phone,
-      startX + contentWidth - 115,
-      phoneFaxHalfY + 59
-    );
+    if (config?.personal?.contact?.phone) {
+      doc.text(
+        config.personal.contact.phone,
+        startX + contentWidth - 115,
+        phoneFaxHalfY + 59
+      );
+    }
     doc
       .moveTo(startX + contentWidth - offsetX, phoneFaxY)
       .lineTo(
@@ -260,16 +286,22 @@ export class ResumeFrameGenerator {
 
     // 住所行1
     doc.text("ふりがな", startX + 5, personalInfoY + 123);
-    doc.text(
-      config.personal.address.value_ruby,
-      startX + 60,
-      personalInfoY + 123
-    );
+    if (config?.personal?.address?.value_ruby) {
+      doc.text(
+        config.personal.address.value_ruby,
+        startX + 60,
+        personalInfoY + 123
+      );
+    }
 
     doc.text("現住所 〒", startX + 5, personalInfoY + 143);
-    doc.text(config.personal.address.zip, startX + 60, personalInfoY + 143);
+    if (config?.personal?.address?.zip) {
+      doc.text(config.personal.address.zip, startX + 60, personalInfoY + 143);
+    }
     doc.fontSize(12);
-    doc.text(config.personal.address.value, startX + 60, personalInfoY + 163);
+    if (config?.personal?.address?.value) {
+      doc.text(config.personal.address.value, startX + 60, personalInfoY + 163);
+    }
     doc.fontSize(9);
     doc
       .moveTo(startX, personalInfoY + 120)
@@ -285,19 +317,29 @@ export class ResumeFrameGenerator {
 
     // 住所行2
     doc.text("ふりがな", startX + 5, phoneFaxHalfY + 3);
-    doc.text(
-      config.personal.contact.value_ruby,
-      startX + 60,
-      phoneFaxHalfY + 3
-    );
+    if (config?.personal?.contact?.value_ruby) {
+      doc.text(
+        config.personal.contact.value_ruby,
+        startX + 60,
+        phoneFaxHalfY + 3
+      );
+    }
     doc.text("連絡先 〒", startX + 5, phoneFaxHalfY + 20 + 3);
-    doc.text(config.personal.contact.zip, startX + 60, phoneFaxHalfY + 20 + 3);
+    if (config?.personal?.contact?.zip) {
+      doc.text(
+        config.personal.contact.zip,
+        startX + 60,
+        phoneFaxHalfY + 20 + 3
+      );
+    }
     doc.fontSize(12);
-    doc.text(
-      config.personal.contact.value,
-      startX + 60,
-      phoneFaxHalfY + 40 + 3
-    );
+    if (config?.personal?.contact?.value) {
+      doc.text(
+        config.personal.contact.value,
+        startX + 60,
+        phoneFaxHalfY + 40 + 3
+      );
+    }
     doc.fontSize(9);
     doc
       .moveTo(startX, phoneFaxHalfY)
@@ -358,7 +400,7 @@ export class ResumeFrameGenerator {
     }
 
     let index = 0;
-    if (config.education.length > 0) {
+    if (config?.education?.length > 0) {
       doc.fontSize(12);
       doc.text("学歴", startX + 305, educationWorkY + 26);
       index++;
@@ -375,7 +417,7 @@ export class ResumeFrameGenerator {
       }
     }
 
-    if (config.experience.length > 0) {
+    if (config?.experience?.length > 0) {
       doc.fontSize(12);
       doc.text("職歴", startX + 305, educationWorkY + 26 + index * 23);
       for (let i = 1; i <= config.experience.length; i++) {
@@ -439,7 +481,7 @@ export class ResumeFrameGenerator {
       }
     }
 
-    if (config.licences.length > 0) {
+    if (config?.licences?.length > 0) {
       doc.fontSize(12);
       for (let i = 0; i < config.licences.length; i++) {
         const y = certificateY + 26 + i * 23;
@@ -462,22 +504,30 @@ export class ResumeFrameGenerator {
     doc.text("配偶者", startX + 275, infoY + 4);
     doc.text("配偶者の扶養義務", startX + 408, infoY + 4);
     doc.fontSize(12);
-    doc.text(config.commuting_time, startX, infoY + 24, {
-      align: "center",
-      width: 138,
-    });
-    doc.text(config.dependents, startX + 134, infoY + 24, {
-      align: "center",
-      width: 138,
-    });
-    doc.text(config.spouse, startX + 263, infoY + 24, {
-      align: "center",
-      width: 138,
-    });
-    doc.text(config.supporting_spouse, startX + 396, infoY + 24, {
-      align: "center",
-      width: 138,
-    });
+    if (config?.commuting_time) {
+      doc.text(config.commuting_time, startX, infoY + 24, {
+        align: "center",
+        width: 138,
+      });
+    }
+    if (config?.dependents) {
+      doc.text(config.dependents, startX + 134, infoY + 24, {
+        align: "center",
+        width: 138,
+      });
+    }
+    if (config?.spouse) {
+      doc.text(config.spouse, startX + 263, infoY + 24, {
+        align: "center",
+        width: 138,
+      });
+    }
+    if (config?.supporting_spouse) {
+      doc.text(config.supporting_spouse, startX + 396, infoY + 24, {
+        align: "center",
+        width: 138,
+      });
+    }
     doc.fontSize(9);
 
     // 外枠（太線）
@@ -504,10 +554,12 @@ export class ResumeFrameGenerator {
     const hobbyHeight = 120;
     doc.text("趣味・特技", startX + 7, hobbyY + 5);
     doc.fontSize(12);
-    doc.text(config.hobby, startX + 7, hobbyY + 24, {
-      align: "left",
-      width: contentWidth - startX - 14,
-    });
+    if (config?.hobby) {
+      doc.text(config.hobby, startX + 7, hobbyY + 24, {
+        align: "left",
+        width: contentWidth - startX - 14,
+      });
+    }
 
     // 外枠（太線）
     doc.lineWidth(2);
@@ -520,10 +572,12 @@ export class ResumeFrameGenerator {
     doc.fontSize(9);
     doc.text("志望動機", startX + 7, motivationY + 5);
     doc.fontSize(12);
-    doc.text(config.motivation, startX + 7, motivationY + 24, {
-      align: "left",
-      width: contentWidth - startX - 14,
-    });
+    if (config?.motivation) {
+      doc.text(config.motivation, startX + 7, motivationY + 24, {
+        align: "left",
+        width: contentWidth - startX - 14,
+      });
+    }
 
     // 外枠（太線）
     doc.lineWidth(2);
@@ -536,120 +590,17 @@ export class ResumeFrameGenerator {
     doc.fontSize(9);
     doc.text("本人希望記入欄", startX + 7, requestY + 5);
     doc.fontSize(12);
-    doc.text(config.request, startX + 7, requestY + 24, {
-      align: "left",
-      width: contentWidth - startX - 14,
-    });
+    if (config?.request) {
+      doc.text(config.request, startX + 7, requestY + 24, {
+        align: "left",
+        width: contentWidth - startX - 14,
+      });
+    }
 
     // 外枠（太線）
     doc.lineWidth(2);
     doc.rect(startX, requestY, contentWidth, requestHeight).stroke();
     doc.lineWidth(1);
-  }
-
-  /**
-   * 日本語テキストを追加する
-   */
-  private addPage1Text(doc: PDFKit.PDFDocument): void {
-    doc.switchToPage(1);
-    const contentWidth = this.pageWidth - 2 * this.margin;
-    const startX = this.margin;
-
-    // 履歴書タイトル
-    doc.fontSize(20);
-    const titleText = "履歴書";
-    const titleWidth = doc.widthOfString(titleText);
-    const titleX = startX + (contentWidth - titleWidth) / 2;
-    doc.text(titleText, titleX, 40);
-
-    // 作成日
-    doc.fontSize(10);
-    const dateText = "2024年 4月 1日現在";
-    const dateWidth = doc.widthOfString(dateText);
-    const dateX = startX + contentWidth - dateWidth;
-    doc.text(dateText, dateX, 50);
-
-    // 個人情報ラベル
-    doc.fontSize(9);
-    const personalInfoY = 100;
-
-    // ふりがな
-    doc.text("ふりがな", startX + 5, personalInfoY + 5);
-
-    // 氏名
-    doc.text("氏名", startX + 5, personalInfoY + 25);
-
-    // 生年月日
-    doc.text("生年月日", startX + 5, personalInfoY + 65);
-
-    // 性別
-    doc.text("男", startX + 330, personalInfoY + 75);
-
-    // 連絡先ラベル
-    doc.text("携帯電話", startX + 5, personalInfoY + 105);
-    doc.text("E-MAIL", startX + 210, personalInfoY + 105);
-
-    // 住所ラベル
-    doc.text("ふりがな", startX + 5, personalInfoY + 125);
-    doc.text("現住所", startX + 5, personalInfoY + 145);
-
-    // 写真欄ラベル
-    doc.text("写真", startX + contentWidth - 80, personalInfoY + 50);
-    doc.text("電話", startX + contentWidth - 110, personalInfoY + 125);
-    doc.text("FAX", startX + contentWidth - 110, personalInfoY + 145);
-
-    // 学歴・職歴セクション
-    const educationWorkY = personalInfoY + 280 + 30;
-
-    // 表ヘッダー
-    doc.text("年", startX + 20, educationWorkY + 8);
-    doc.text("月", startX + 60, educationWorkY + 8);
-    doc.text(
-      "学歴・職歴（各項目ごとにまとめて書く）",
-      startX + 200,
-      educationWorkY + 8
-    );
-  }
-
-  /**
-   * 2ページ目の日本語テキストを追加する
-   */
-  private addPage2Text(doc: PDFKit.PDFDocument): void {
-    // doc.switchToPage(2);
-    const contentWidth = this.pageWidth - 2 * this.margin;
-    const startX = this.margin;
-
-    // 2ページ目の各セクションのラベルを追加
-    doc.fontSize(9);
-
-    // 資格・免許セクション
-    const certificateY = 100;
-    doc.text("年", startX + 20, certificateY + 8);
-    doc.text("月", startX + 60, certificateY + 8);
-    doc.text("免許・資格", startX + 200, certificateY + 8);
-
-    // 通勤時間・扶養家族等の情報セクション
-    const infoY = certificateY + 140 + 20;
-    doc.text("通勤時間", startX + 10, infoY + 15);
-    doc.text("扶養家族数", startX + contentWidth / 4 + 10, infoY + 15);
-    doc.text("配偶者", startX + contentWidth / 2 + 10, infoY + 15);
-    doc.text(
-      "配偶者の扶養義務",
-      startX + (3 * contentWidth) / 4 + 10,
-      infoY + 15
-    );
-
-    // 趣味・特技セクション
-    const hobbyY = infoY + 40 + 20;
-    doc.text("趣味・特技", startX + 10, hobbyY + 15);
-
-    // 志望動機セクション
-    const motivationY = hobbyY + 120 + 20;
-    doc.text("志望動機", startX + 10, motivationY + 15);
-
-    // 本人希望記入欄
-    const requestY = motivationY + 120 + 20;
-    doc.text("本人希望記入欄", startX + 10, requestY + 15);
   }
 
   /**

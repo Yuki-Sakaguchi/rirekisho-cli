@@ -4,10 +4,11 @@ import { ConfigLoader } from "./config-loader.js";
 async function main() {
   const config = ConfigLoader.loadFromYaml("data/resume.yaml");
   const generator = new ResumeFrameGenerator();
-  const outputPath = "precise-resume-layout.pdf";
+  const outputPath = "resume.pdf";
+  const imagePath = "data/photo.png";
 
   try {
-    await generator.generate(outputPath, config);
+    await generator.generate(outputPath, config, imagePath);
     console.log(`PDFを生成しました: ${outputPath}`);
   } catch (error) {
     console.error("PDF生成エラー:", error);

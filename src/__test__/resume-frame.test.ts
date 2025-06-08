@@ -20,9 +20,10 @@ describe("ResumeFrameGenerator", () => {
     // Arrange
     const generator = new ResumeFrameGenerator();
     const config = ConfigLoader.loadFromYaml("data/resume.yaml");
+    const imagePath = path.join(process.cwd(), "data", "photo.png");
 
     // Act
-    await generator.generate(testPdfPath, config);
+    await generator.generate(testPdfPath, config, imagePath);
 
     // Assert
     expect(existsSync(testPdfPath)).toBe(true);
@@ -32,9 +33,10 @@ describe("ResumeFrameGenerator", () => {
     // Arrange
     const generator = new ResumeFrameGenerator();
     const config = ConfigLoader.loadFromYaml("data/resume.yaml");
+    const imagePath = path.join(process.cwd(), "data", "photo.png");
 
     // Act
-    await generator.generate(testPdfPath, config);
+    await generator.generate(testPdfPath, config, imagePath);
 
     // Assert
     const stats = statSync(testPdfPath);
@@ -45,9 +47,10 @@ describe("ResumeFrameGenerator", () => {
     // Arrange
     const generator = new ResumeFrameGenerator();
     const config = ConfigLoader.loadFromYaml("data/resume.yaml");
+    const imagePath = path.join(process.cwd(), "data", "photo.png");
 
     // Act
-    await generator.generate(testPdfPath, config);
+    await generator.generate(testPdfPath, config, imagePath);
 
     // Assert
     expect(existsSync(testPdfPath)).toBe(true);
