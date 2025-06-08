@@ -1,75 +1,91 @@
 # 個人情報
 personal:
-  name: 山田太郎
-  ruby: やまだ たろう
-  birth_day: 1991-06-04
+  name: 佐藤 太郎
+  ruby: さとう たろう
+  birth_day: 1995-03-15
   gender: 男
-  email: yamada@example.com
-  phone: 090-1234-5678
+  email: sato.taro@example.com
+  phone: 080-9876-5432
   address:
-    zip: 100-0001
-    value_ruby: とうきょうとちよだくちよだいちよだいち
-    value: 東京都千代田区千代田1-1-1
-    phone: 090-1234-5678
-    fax: 03-1234-5678
+    zip: 150-0001
+    value_ruby: とうきょうとしぶやくじんぐうまえ
+    value: 東京都渋谷区神宮前1-2-3 ABCマンション101号
+    phone: 080-9876-5432
+    fax: 03-9876-5432
   contact:
-    zip: 100-0001
-    value_ruby: とうきょうとちよだくちよだいちよだいち
-    value: 東京都千代田区千代田1-1-1
-    phone: 090-1234-5678
-    fax: 03-1234-5678
+    zip: 150-0001
+    value_ruby: とうきょうとしぶやくじんぐうまえ
+    value: 東京都渋谷区神宮前1-2-3 ABCマンション101号
+    phone: 080-9876-5432
+    fax: 03-9876-5432
 
 # 学歴
 education:
-  - year: 2007
-    month: 12
-    value: 〇〇高校 入学
-  - year: 2010
+  - year: 2011
+    month: 4
+    value: 〇〇県立△△高等学校 入学
+  - year: 2014
+    month: 3
+    value: 同 卒業
+  - year: 2014
+    month: 4
+    value: ××大学 情報学部 入学
+  - year: 2018
     month: 3
     value: 同 卒業
 
 # 職歴
 experience:
-  - year: 2014
+  - year: 2018
+    month: 4
+    value: 株式会社テクノロジー 入社
+  - year: 2021
+    month: 6
+    value: 同社 開発部 異動
+  - year: 2023
     month: 12
-    value: 株式会社A社 入社
-  - year: 2017
-    month: 4
-    value: 株式会社A社 退職
-  - year: 2030
-    month: 4
+    value: 同社 退職
+  - year: 2024
+    month: 1
     value: 現在に至る
 
 # 免許・資格
 licences:
-  - year: 2010
-    month: 9
+  - year: 2013
+    month: 8
     value: 普通自動車第一種運転免許 取得
-  - year: 2014
+  - year: 2019
+    month: 5
+    value: 基本情報技術者試験 合格
+  - year: 2022
     month: 11
-    value: 普通自動二輪車第一種運転免許 取得
+    value: TOEIC 850点 取得
 
 # 通勤時間
-commuting_time: 1時間20分
+commuting_time: 45分
 
 # 扶養家族数(配偶者を除く)
 dependents: 無
 
 # 配偶者の有無
-spouse: 有
+spouse: 無
 
 # 配偶者の扶養義務
 supporting_spouse: 無
 
 # 趣味
 hobby: |
-  VimとHHTBが好きです。
-  土日は個人学習や個人開発をやっていることが多いです。
+  プログラミングと読書が趣味です。
+  週末は技術書を読んだり、個人プロジェクトの開発をしています。
+  また、登山も好きで月に1回は山に登っています。
 
 # 志望動機
 motivation: |
-  <会社に合わせて変える>
+  貴社のエンジニア職に応募させていただきました。
+  前職で培ったWebアプリケーション開発の経験を活かし、
+  より多くのユーザーに価値を提供できるサービス開発に携わりたいと考えております。
 
 # 本人希望記入欄
 request: |
-  特にありません。
+  勤務地については都内希望です。
+  その他の条件については面接時にご相談させていただければと思います。
