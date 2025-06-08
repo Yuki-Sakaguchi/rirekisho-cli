@@ -56,7 +56,7 @@ resume-pdf generate -i my-resume.yaml -m my-photo.jpg -o my-resume.pdf
 # 個人情報
 personal:
   name: 佐藤 太郎
-  ruby: さとう 太郎
+  ruby: さとう たろう
   birth_day: 1995-03-15
   gender: 男
   email: sato.taro@example.com
