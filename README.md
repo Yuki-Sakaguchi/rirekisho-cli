@@ -7,6 +7,10 @@
 
 YAMLファイルから美しい履歴書PDFを自動生成します。JIS規格に準拠したレイアウトで、プロフェッショナルな履歴書を作成できます。
 
+## 📦 サンプル
+
+https://github.com/Yuki-Sakaguchi/rirekisho-cli/blob/main/example/resume.pdf
+
 ## ✨ 特徴
 
 - 📝 **YAML設定**: シンプルなYAMLファイルで履歴書情報を管理
