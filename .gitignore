@@ -1,6 +1,5 @@
 node_modules/
 dist/
-*.pdf
 coverage/
 .env
 .DS_Store
