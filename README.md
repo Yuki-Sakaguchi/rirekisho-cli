@@ -1,5 +1,8 @@
 # rirekisho-cli
 
+![NPM Version](https://img.shields.io/npm/v/rirekisho-cli)
+![NPM Downloads](https://img.shields.io/npm/d18m/rirekisho-cli)
+
 **日本の履歴書を簡単に生成できるCLIツール**
 
 YAMLファイルから美しい履歴書PDFを自動生成します。JIS規格に準拠したレイアウトで、プロフェッショナルな履歴書を作成できます。
