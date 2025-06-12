@@ -2,6 +2,7 @@ import { ResumeFrameGenerator } from "../resume-frame-generator.js";
 import { existsSync, unlinkSync, statSync } from "fs";
 import path from "path";
 import { ConfigLoader } from "../config-loader.js";
+import { describe, test, afterEach, expect } from "vitest";
 
 describe("ResumeFrameGenerator", () => {
   const testPdfPath = path.join(process.cwd(), "test-resume-frame.pdf");

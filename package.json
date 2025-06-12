@@ -14,8 +14,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "build": "tsc",
     "generate": "tsx src/index.ts",
     "dev": "tsx src/index.ts",
@@ -27,14 +27,13 @@
     "pdfkit": "^0.14.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.8",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.10.5",
     "@types/pdfkit": "^0.12.12",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
+    "@vitest/ui": "^3.2.3",
     "tsx": "^4.6.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^3.2.3"
   },
   "keywords": [
     "resume",
