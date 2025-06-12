@@ -2,7 +2,7 @@ src/
 *.ts
 !*.d.ts
 tsconfig.json
-jest.config.js
+vitest.config.ts
 coverage/
 .env
 .DS_Store

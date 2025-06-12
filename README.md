@@ -191,7 +191,7 @@ npm test
 - **PDFKit**: PDF生成エンジン
 - **Commander.js**: CLI framework
 - **js-yaml**: YAML設定ファイル解析
-- **Jest**: テストフレームワーク
+- **Vitest**: テストフレームワーク
 
 ## 📝 ライセンス
 
