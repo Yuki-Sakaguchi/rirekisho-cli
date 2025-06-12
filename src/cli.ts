@@ -3,8 +3,11 @@
 import { ResumeFrameGenerator } from "./resume-frame-generator.js";
 import { ConfigLoader } from "./config-loader.js";
 import { program } from "commander";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const pkg = require("../package.json");
 
-program.name("rirekisho").description("履歴書PDF生成CLI").version("0.1.0");
+program.name("rirekisho").description("履歴書PDF生成CLI").version(pkg.version);
 
 program
   .command("generate")
