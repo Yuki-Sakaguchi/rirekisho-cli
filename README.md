@@ -1,7 +1,7 @@
 # rirekisho-cli
 
-![NPM Version](https://img.shields.io/npm/v/rirekisho-cli)
-![NPM Downloads](https://img.shields.io/npm/d18m/rirekisho-cli)
+<a href="https://www.npmjs.com/package/rirekisho-cli" target="_blank"><img alt="NPM Version" src="https://img.shields.io/npm/v/rirekisho-cli" /></a>
+<a href="https://www.npmjs.com/package/rirekisho-cli" target="_blank"><img alt="NPM Downloads" src="https://img.shields.io/npm/d18m/rirekisho-cli" /></a>
 
 **日本の履歴書を簡単に生成できるCLIツール**
 
