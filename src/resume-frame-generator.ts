@@ -8,7 +8,8 @@ export class ResumeFrameGenerator {
   private readonly pageHeight = 841.89; // A4 height in points
   private readonly margin = 30;
   private readonly fontPath = path.join(
-    process.cwd(),
+    path.dirname(new URL(import.meta.url).pathname),
+    "..",
     "fonts",
     "NotoSerifJP-Regular.ttf"
   );

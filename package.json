@@ -9,6 +9,7 @@
   },
   "files": [
     "dist",
+    "fonts",
     "README.md",
     "LICENSE"
   ],
