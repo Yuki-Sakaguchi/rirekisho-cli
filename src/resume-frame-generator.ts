@@ -7,12 +7,37 @@ export class ResumeFrameGenerator {
   private readonly pageWidth = 595.28; // A4 width in points
   private readonly pageHeight = 841.89; // A4 height in points
   private readonly margin = 30;
-  private readonly fontPath = path.join(
-    path.dirname(new URL(import.meta.url).pathname),
-    "..",
-    "fonts",
-    "NotoSerifJP-Regular.ttf"
-  );
+
+  // フォントパスを動的に解決
+  private get fontPath(): string {
+    // 実行ファイルのパスを基準にフォントを探す
+    const scriptPath = process.argv[1];
+    const scriptDir = path.dirname(scriptPath);
+
+    const fontPaths = [
+      // 実行ファイルと同じディレクトリから
+      path.join(scriptDir, "..", "fonts", "NotoSerifJP-Regular.ttf"),
+      // プロジェクトルートから
+      path.join(process.cwd(), "fonts", "NotoSerifJP-Regular.ttf"),
+      // node_modulesから
+      path.join(
+        process.cwd(),
+        "node_modules",
+        "rirekisho-cli",
+        "fonts",
+        "NotoSerifJP-Regular.ttf"
+      ),
+    ];
+
+    for (const fontPath of fontPaths) {
+      if (existsSync(fontPath)) {
+        return fontPath;
+      }
+    }
+
+    // フォールバック
+    return path.join(process.cwd(), "fonts", "NotoSerifJP-Regular.ttf");
+  }
 
   /**
    * 履歴書の枠線を描画したPDFを生成する
